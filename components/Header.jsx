@@ -2,6 +2,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const BASE_URL = "https://openapi.programming-hero.com/api/bazardor";
@@ -9,6 +10,12 @@ const BASE_URL = "https://openapi.programming-hero.com/api/bazardor";
 export default function Header() {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const pathname = usePathname();
+
+  const isSignupPage = pathname === "/signup";
+  const isLoginPage = pathname === "/login";
+  const isAuthPage = isSignupPage || isLoginPage;
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -69,25 +76,56 @@ export default function Header() {
             </div>
           </Link>
 
-          {/* Profile */}
-          <Link
-            href="/profile"
-            className="flex items-center gap-3 rounded-full border border-gray-200 px-4 py-2 transition hover:bg-gray-50"
-          >
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-green-100 font-bold text-green-700">
-              R
-            </div>
+          {/* Authentication Buttons / Profile */}
+          {isAuthPage ? (
+            <div className="flex items-center gap-3">
 
-            <div className="hidden sm:block">
-              <p className="text-sm font-semibold text-gray-800">
-                Rezwan
-              </p>
+              {/* Sign In */}
+              <Link
+                href="/login"
+                className={`rounded-lg px-4 py-2 text-sm font-semibold transition ${
+                  isLoginPage
+                    ? "bg-green-700 text-white hover:bg-green-800"
+                    : "text-gray-700 hover:bg-gray-100"
+                }`}
+              >
+                সাইন ইন
+              </Link>
 
-              <p className="text-xs text-gray-500">
-                View Profile
-              </p>
+              {/* Sign Up */}
+              <Link
+                href="/signup"
+                className={`rounded-lg px-4 py-2 text-sm font-semibold transition ${
+                  isSignupPage
+                    ? "bg-green-700 text-white hover:bg-green-800"
+                    : "text-gray-700 hover:bg-gray-100"
+                }`}
+              >
+                সাইন আপ
+              </Link>
+
             </div>
-          </Link>
+          ) : (
+            /* Existing Profile */
+            <Link
+              href="/profile"
+              className="flex items-center gap-3 rounded-full border border-gray-200 px-4 py-2 transition hover:bg-gray-50"
+            >
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-green-100 font-bold text-green-700">
+                R
+              </div>
+
+              <div className="hidden sm:block">
+                <p className="text-sm font-semibold text-gray-800">
+                  Rezwan
+                </p>
+
+                <p className="text-xs text-gray-500">
+                  View Profile
+                </p>
+              </div>
+            </Link>
+          )}
         </div>
 
         {/* Category Navigation */}
