@@ -118,9 +118,26 @@ export default function ProductDetailsPage() {
               পণ্যের তথ্য লোড হচ্ছে...
             </p>
           ) : error ? (
-            <p className="py-20 text-center text-red-500">
-              {error}
-            </p>
+            <div className="flex min-h-[450px] flex-col items-center justify-center text-center">
+              <h1 className="text-7xl font-bold text-green-700">
+                404
+              </h1>
+
+              <h2 className="mt-5 text-2xl font-bold text-[#1c2b20]">
+                পণ্যটি পাওয়া যায়নি!
+              </h2>
+
+              <p className="mt-3 text-sm text-gray-500">
+                দুঃখিত, আপনি যে পণ্যটি খুঁজছেন সেটি পাওয়া যাচ্ছে না।
+              </p>
+
+              <Link
+                href="/"
+                className="mt-7 rounded-lg bg-green-700 px-6 py-3 text-sm font-semibold text-white transition hover:bg-green-800"
+              >
+                হোম পেজে ফিরে যান
+              </Link>
+            </div>
           ) : product ? (
             <>
 

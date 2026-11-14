@@ -1,8 +1,10 @@
+
 "use client";
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { authClient } from "@/lib/auth-client";
 
 const BASE_URL = "https://openapi.programming-hero.com/api/bazardor";
@@ -21,7 +23,6 @@ export default function Navbar() {
 
   const isSignupPage = pathname === "/signup";
   const isSigninPage = pathname === "/signin";
-  const isAuthPage = isSignupPage || isSigninPage;
 
   // Fetch Categories
   useEffect(() => {
@@ -63,24 +64,33 @@ export default function Navbar() {
   // Logout
   const handleSignOut = async () => {
     try {
-      await authClient.signOut();
+      await authClient.signOut({
+        fetchOptions: {
+          onSuccess: () => {
+            setIsUserMenuOpen(false);
 
-      setIsUserMenuOpen(false);
+            toast.success("সফলভাবে সাইন আউট হয়েছে!");
 
-      router.push("/");
-      router.refresh();
+            router.replace("/signin");
+            router.refresh();
+          },
+          onError: (ctx) => {
+            console.error("Signout error:", ctx.error);
+            toast.error("সাইন আউট করা যায়নি। আবার চেষ্টা করুন।");
+          },
+        },
+      });
     } catch (error) {
       console.error("Signout error:", error);
+      toast.error("কিছু সমস্যা হয়েছে। আবার চেষ্টা করুন।");
     }
   };
 
   return (
     <header className="w-full border-b border-gray-200 bg-white">
       <div className="mx-auto max-w-[1440px] px-5 lg:px-12">
-
         {/* Top Header */}
         <div className="flex items-center justify-between py-5">
-
           {/* Logo and Date */}
           <Link href="/" className="flex items-center gap-3">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-green-600 text-2xl">
@@ -92,9 +102,7 @@ export default function Navbar() {
                 বাজার দর
               </h1>
 
-              <p className="text-xs text-gray-500">
-                {today}
-              </p>
+              <p className="text-xs text-gray-500">{today}</p>
             </div>
           </Link>
 
@@ -103,7 +111,6 @@ export default function Navbar() {
             <div className="h-10 w-24 animate-pulse rounded-lg bg-gray-100" />
           ) : !user ? (
             <div className="flex items-center gap-3">
-
               <Link
                 href="/signin"
                 className={`rounded-lg px-4 py-2 text-sm font-semibold transition ${
@@ -125,13 +132,10 @@ export default function Navbar() {
               >
                 সাইন আপ
               </Link>
-
             </div>
           ) : (
-
             /* User Profile Dropdown */
             <div className="relative">
-
               {/* Profile Button */}
               <button
                 type="button"
@@ -148,9 +152,7 @@ export default function Navbar() {
                     {user.name || "User"}
                   </p>
 
-                  <p className="text-xs text-gray-500">
-                    View Profile
-                  </p>
+                  <p className="text-xs text-gray-500">View Profile</p>
                 </div>
 
                 <span className="text-xs text-gray-500">
@@ -161,7 +163,6 @@ export default function Navbar() {
               {/* Dropdown Menu */}
               {isUserMenuOpen && (
                 <div className="absolute right-0 top-full z-50 mt-3 w-64 rounded-xl border border-gray-100 bg-white p-4 shadow-lg">
-
                   {/* User Information */}
                   <div className="border-b border-gray-100 pb-3">
                     <h3 className="text-sm font-bold text-gray-900">
@@ -220,7 +221,6 @@ export default function Navbar() {
 
                     <span>সাইন আউট</span>
                   </button>
-
                 </div>
               )}
             </div>
@@ -255,7 +255,6 @@ export default function Navbar() {
             })
           )}
         </nav>
-
       </div>
     </header>
   );

@@ -69,9 +69,41 @@ export default function CategoryPage() {
       <main className="px-5 py-10 lg:px-12">
         <div className="mx-auto max-w-[1440px]">
           {loading ? (
-            <p className="py-12 text-center text-sm text-gray-500">
-              পণ্য লোড হচ্ছে...
-            </p>
+            /* Category Skeleton Loader */
+            <div className="animate-pulse">
+              {/* Category Heading Skeleton */}
+              <div className="mb-6 flex items-center gap-4 rounded-xl border border-gray-200 bg-white p-6 sm:p-8">
+                <div className="h-16 w-16 shrink-0 rounded-xl bg-gray-200"></div>
+
+                <div className="flex-1 space-y-3">
+                  <div className="h-6 w-40 rounded bg-gray-200"></div>
+                  <div className="h-4 w-64 max-w-full rounded bg-gray-200"></div>
+                </div>
+              </div>
+
+              {/* Product Cards Skeleton */}
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {Array.from({ length: 8 }).map((_, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between rounded-xl border border-gray-200 bg-white p-3"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-xl bg-gray-200"></div>
+
+                      <div className="space-y-2">
+                        <div className="h-4 w-24 rounded bg-gray-200"></div>
+                        <div className="h-3 w-16 rounded bg-gray-200"></div>
+                        <div className="h-3 w-20 rounded bg-gray-200"></div>
+                        <div className="h-4 w-24 rounded bg-gray-200"></div>
+                      </div>
+                    </div>
+
+                    <div className="h-6 w-14 rounded-full bg-gray-200"></div>
+                  </div>
+                ))}
+              </div>
+            </div>
           ) : error ? (
             <div className="py-16 text-center">
               <p className="text-sm text-red-500">{error}</p>

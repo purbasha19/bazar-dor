@@ -2,6 +2,7 @@
 "use client";
 
 import Link from "next/link";
+import toast from "react-hot-toast";
 import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
 
@@ -16,12 +17,12 @@ export default function SignupForm() {
     e.preventDefault();
 
     if (password.length < 8) {
-      alert("পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে।");
+      toast.error("পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে।");
       return;
     }
 
     if (password !== confirmPassword) {
-      alert("দুটি পাসওয়ার্ড মিলছে না!");
+      toast.error("দুটি পাসওয়ার্ড মিলছে না!");
       return;
     }
 
@@ -36,17 +37,22 @@ export default function SignupForm() {
 
       if (error) {
         console.error("BetterAuth signup error:", error);
-        alert(error.message || JSON.stringify(error));
+        toast.error(error.message || "অ্যাকাউন্ট তৈরি করা যায়নি।");
         return;
       }
 
       console.log("Signup successful:", data);
-      alert("অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে!");
-      window.location.href = "/";
+      toast.success("অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে!");
+
+      setTimeout(() => {
+        window.location.href = "/signin";
+      }, 1000);
 
     } catch (error) {
       console.error("Signup error:", error);
-      alert(error.message || "কিছু একটা সমস্যা হয়েছে। আবার চেষ্টা করো।");
+      toast.error(
+        error.message || "কিছু একটা সমস্যা হয়েছে। আবার চেষ্টা করো।"
+      );
     } finally {
       setLoading(false);
     }
@@ -56,7 +62,10 @@ export default function SignupForm() {
     <div className="w-full max-w-[416px] rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
       <form onSubmit={handleSignup} className="space-y-4">
         <div>
-          <label htmlFor="name" className="mb-2 block text-sm font-medium text-[#1c2b20]">
+          <label
+            htmlFor="name"
+            className="mb-2 block text-sm font-medium text-[#1c2b20]"
+          >
             নাম
           </label>
           <input
@@ -71,7 +80,10 @@ export default function SignupForm() {
         </div>
 
         <div>
-          <label htmlFor="email" className="mb-2 block text-sm font-medium text-[#1c2b20]">
+          <label
+            htmlFor="email"
+            className="mb-2 block text-sm font-medium text-[#1c2b20]"
+          >
             ইমেইল
           </label>
           <input
@@ -86,7 +98,10 @@ export default function SignupForm() {
         </div>
 
         <div>
-          <label htmlFor="password" className="mb-2 block text-sm font-medium text-[#1c2b20]">
+          <label
+            htmlFor="password"
+            className="mb-2 block text-sm font-medium text-[#1c2b20]"
+          >
             পাসওয়ার্ড
           </label>
           <input
@@ -101,7 +116,10 @@ export default function SignupForm() {
         </div>
 
         <div>
-          <label htmlFor="confirmPassword" className="mb-2 block text-sm font-medium text-[#1c2b20]">
+          <label
+            htmlFor="confirmPassword"
+            className="mb-2 block text-sm font-medium text-[#1c2b20]"
+          >
             পাসওয়ার্ড নিশ্চিত করুন
           </label>
           <input

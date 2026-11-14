@@ -1,6 +1,8 @@
+
 "use client";
 
 import Link from "next/link";
+import toast from "react-hot-toast";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
@@ -11,17 +13,12 @@ export default function SigninForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
 
   const handleSignin = async (e) => {
     e.preventDefault();
 
-    setError("");
-    setSuccess("");
-
     if (!email || !password) {
-      setError("ইমেইল ও পাসওয়ার্ড লিখুন।");
+      toast.error("ইমেইল ও পাসওয়ার্ড লিখুন।");
       return;
     }
 
@@ -34,17 +31,17 @@ export default function SigninForm() {
       });
 
       if (error) {
-        setError(error.message || "সাইন ইন করা যায়নি।");
+        toast.error(error.message || "সাইন ইন করা যায়নি।");
         return;
       }
 
-      setSuccess("সাইন ইন সফল হয়েছে!");
+      toast.success("সাইন ইন সফল হয়েছে!");
 
       router.push("/");
       router.refresh();
     } catch (err) {
       console.error("Signin error:", err);
-      setError("কিছু সমস্যা হয়েছে। আবার চেষ্টা করুন।");
+      toast.error("কিছু সমস্যা হয়েছে। আবার চেষ্টা করুন।");
     } finally {
       setLoading(false);
     }
@@ -53,7 +50,6 @@ export default function SigninForm() {
   return (
     <div className="w-full max-w-[416px] rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
       <form onSubmit={handleSignin} className="space-y-4">
-        {/* Email */}
         <div>
           <label
             htmlFor="email"
@@ -73,7 +69,6 @@ export default function SigninForm() {
           />
         </div>
 
-        {/* Password */}
         <div>
           <label
             htmlFor="password"
@@ -93,17 +88,6 @@ export default function SigninForm() {
           />
         </div>
 
-        {/* Error Message */}
-        {error && (
-          <p className="text-sm text-red-600">{error}</p>
-        )}
-
-        {/* Success Message */}
-        {success && (
-          <p className="text-sm text-green-700">{success}</p>
-        )}
-
-        {/* Submit Button */}
         <button
           type="submit"
           disabled={loading}
@@ -113,14 +97,12 @@ export default function SigninForm() {
         </button>
       </form>
 
-      {/* Divider */}
       <div className="my-5 flex items-center gap-3">
         <div className="h-px flex-1 bg-gray-200" />
         <span className="text-xs text-gray-400">অথবা</span>
         <div className="h-px flex-1 bg-gray-200" />
       </div>
 
-      {/* Social Login */}
       <div className="grid grid-cols-2 gap-3">
         <button
           type="button"
@@ -141,7 +123,6 @@ export default function SigninForm() {
         </button>
       </div>
 
-      {/* Sign Up Link */}
       <p className="mt-5 text-center text-sm text-gray-500">
         অ্যাকাউন্ট নেই?{" "}
         <Link
