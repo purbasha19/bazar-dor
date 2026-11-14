@@ -1,7 +1,7 @@
 
 import Link from "next/link";
 
-import Header from "@/components/Header";
+import Navbar from "@/components/Navbar";
 import Ticker from "@/components/Ticker";
 import SigninForm from "@/components/SigninForm";
 import Footer from "@/components/Footer";
@@ -10,7 +10,7 @@ export default function SigninPage() {
   return (
     <div className="min-h-screen bg-[#f8faf8]">
       {/* Header */}
-      <Header />
+      <Navbar />
 
       {/* Market Ticker */}
       <Ticker />

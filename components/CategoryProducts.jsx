@@ -2,17 +2,18 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 
 export default function CategoryProducts({ products = [] }) {
   const [sortBy, setSortBy] = useState("default");
 
   const sortedProducts = [...products].sort((a, b) => {
     if (sortBy === "low-to-high") {
-      return a.today - b.today;
+      return Number(a.today) - Number(b.today);
     }
 
     if (sortBy === "high-to-low") {
-      return b.today - a.today;
+      return Number(b.today) - Number(a.today);
     }
 
     return a.id - b.id;
@@ -31,7 +32,6 @@ export default function CategoryProducts({ products = [] }) {
 
   return (
     <section className="mt-6">
-
       {/* Sorting Bar */}
       <div className="flex items-center justify-end gap-3 rounded-xl border border-gray-200 bg-white px-4 py-4">
         <label
@@ -66,9 +66,10 @@ export default function CategoryProducts({ products = [] }) {
             const isDown = product.change?.dir === "down";
 
             return (
-              <div
+              <Link
                 key={product.id}
-                className="flex items-center justify-between rounded-xl border border-gray-200 bg-[#fbfdfb] p-3"
+                href={`/product/${product.slug}`}
+                className="flex items-center justify-between rounded-xl border border-gray-200 bg-[#fbfdfb] p-3 transition hover:border-green-400 hover:shadow-sm"
               >
                 {/* Product Information */}
                 <div className="flex min-w-0 items-center gap-3">
@@ -106,12 +107,12 @@ export default function CategoryProducts({ products = [] }) {
                   }`}
                 >
                   {isUp ? "▲" : isDown ? "▼" : "—"}{" "}
-                  {Math.abs(Number(product.change?.pct || 0)).toLocaleString(
-                    "bn-BD"
-                  )}
+                  {Math.abs(
+                    Number(product.change?.pct || 0)
+                  ).toLocaleString("bn-BD")}
                   %
                 </span>
-              </div>
+              </Link>
             );
           })}
         </div>

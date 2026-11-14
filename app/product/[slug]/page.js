@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 
-import Header from "@/components/Header";
+import Navbar from "@/components/Navbar";
 import Ticker from "@/components/Ticker";
 import Footer from "@/components/Footer";
 
@@ -107,7 +107,7 @@ export default function ProductDetailsPage() {
 
   return (
     <div className="min-h-screen bg-[#f8faf8]">
-      <Header />
+      <Navbar />
       <Ticker />
 
       <main className="px-5 py-10 lg:px-12">

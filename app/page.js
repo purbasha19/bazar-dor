@@ -1,5 +1,5 @@
 
-import Header from "@/components/Header";
+import Navbar from "@/components/Navbar";
 import Ticker from "@/components/Ticker";
 import HeroSection from "@/components/HeroSection";
 import PriceMovers from "@/components/PriceMovers";
@@ -8,7 +8,7 @@ import Footer from "@/components/Footer";
 export default function Home() {
   return (
     <main className="min-h-screen bg-white">
-      <Header />
+      <Navbar />
       <Ticker />
       <HeroSection />
       <PriceMovers />

@@ -1,28 +1,97 @@
-
 "use client";
 
-import { useState } from "react";
-import Header from "@/components/Header";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import Navbar from "@/components/Navbar";
 import Ticker from "@/components/Ticker";
 import Footer from "@/components/Footer";
+import { authClient } from "@/lib/auth-client";
 
 export default function ProfilePage() {
-  const [name, setName] = useState("Rezwan Ahmed");
-  const [updatedName, setUpdatedName] = useState("Rezwan Ahmed");
+  const router = useRouter();
 
-  const handleUpdate = (e) => {
+  const { data: session, isPending } = authClient.useSession();
+  const user = session?.user;
+
+  const [name, setName] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  // Load logged-in user's name
+  useEffect(() => {
+    if (user) {
+      setName(user.name || "");
+    }
+  }, [user]);
+
+  // Redirect if user is not logged in
+  useEffect(() => {
+    if (!isPending && !user) {
+      router.replace("/signin");
+    }
+  }, [isPending, user, router]);
+
+  // Update Profile
+  const handleUpdate = async (e) => {
     e.preventDefault();
-    setUpdatedName(name);
-    alert("প্রোফাইল আপডেট হয়েছে!");
+
+    setError("");
+    setSuccess("");
+
+    if (!name.trim()) {
+      setError("আপনার নাম লিখুন।");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const { error } = await authClient.updateUser({
+        name: name.trim(),
+      });
+
+      if (error) {
+        setError(error.message || "প্রোফাইল আপডেট করা যায়নি।");
+        return;
+      }
+
+      setSuccess("প্রোফাইল সফলভাবে আপডেট হয়েছে!");
+    } catch (err) {
+      console.error("Profile update error:", err);
+      setError("কিছু সমস্যা হয়েছে। আবার চেষ্টা করুন।");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleSignOut = () => {
-    alert("Sign out functionality will be connected with BetterAuth.");
+  // Sign Out
+  const handleSignOut = async () => {
+    try {
+      await authClient.signOut();
+
+      router.push("/signin");
+      router.refresh();
+    } catch (err) {
+      console.error("Signout error:", err);
+      setError("সাইন আউট করা যায়নি। আবার চেষ্টা করুন।");
+    }
   };
+
+  if (isPending || !user) {
+    return (
+      <div className="min-h-screen bg-[#f8faf8]">
+        <Navbar />
+        <div className="py-20 text-center text-gray-500">
+          Loading profile...
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#f8faf8]">
-      <Header />
+      <Navbar />
       <Ticker />
 
       <main className="px-5 py-12">
@@ -45,22 +114,23 @@ export default function ProfilePage() {
             {/* Avatar and User Details */}
             <div className="flex items-center gap-4">
               <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-green-100 text-2xl font-bold text-green-700">
-                R
+                {user.name?.charAt(0).toUpperCase() || "U"}
               </div>
 
               <div>
                 <h2 className="text-base font-bold text-[#1c2b20]">
-                  {updatedName}
+                  {user.name}
                 </h2>
 
                 <p className="mt-1 text-sm text-gray-500">
-                  rezwanahmed@gmail.com
+                  {user.email}
                 </p>
               </div>
             </div>
 
             {/* Sign Out Button */}
             <button
+              type="button"
               onClick={handleSignOut}
               className="rounded-lg border border-red-300 px-4 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-50"
             >
@@ -97,12 +167,23 @@ export default function ProfilePage() {
                   />
                 </div>
 
+                {/* Error Message */}
+                {error && (
+                  <p className="text-sm text-red-600">{error}</p>
+                )}
+
+                {/* Success Message */}
+                {success && (
+                  <p className="text-sm text-green-700">{success}</p>
+                )}
+
                 {/* Update Button */}
                 <button
                   type="submit"
-                  className="w-full rounded-lg bg-green-700 px-4 py-3 text-sm font-semibold text-white transition hover:bg-green-800"
+                  disabled={loading}
+                  className="w-full rounded-lg bg-green-700 px-4 py-3 text-sm font-semibold text-white transition hover:bg-green-800 disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  আপডেট
+                  {loading ? "আপডেট হচ্ছে..." : "আপডেট"}
                 </button>
 
               </form>

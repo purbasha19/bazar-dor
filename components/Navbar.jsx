@@ -1,23 +1,29 @@
-
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { authClient } from "@/lib/auth-client";
 
 const BASE_URL = "https://openapi.programming-hero.com/api/bazardor";
 
-export default function Header() {
+export default function Navbar() {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
   const pathname = usePathname();
+  const router = useRouter();
+
+  // BetterAuth Session
+  const { data: session, isPending } = authClient.useSession();
+  const user = session?.user;
 
   const isSignupPage = pathname === "/signup";
   const isSigninPage = pathname === "/signin";
   const isAuthPage = isSignupPage || isSigninPage;
 
+  // Fetch Categories
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -46,12 +52,27 @@ export default function Header() {
     fetchCategories();
   }, []);
 
+  // Bangla Date
   const today = new Date().toLocaleDateString("bn-BD", {
     weekday: "long",
     day: "numeric",
     month: "long",
     year: "numeric",
   });
+
+  // Logout
+  const handleSignOut = async () => {
+    try {
+      await authClient.signOut();
+
+      setIsUserMenuOpen(false);
+
+      router.push("/");
+      router.refresh();
+    } catch (error) {
+      console.error("Signout error:", error);
+    }
+  };
 
   return (
     <header className="w-full border-b border-gray-200 bg-white">
@@ -77,11 +98,12 @@ export default function Header() {
             </div>
           </Link>
 
-          {/* Authentication Buttons / Profile */}
-          {isAuthPage ? (
+          {/* Authentication / Profile */}
+          {isPending ? (
+            <div className="h-10 w-24 animate-pulse rounded-lg bg-gray-100" />
+          ) : !user ? (
             <div className="flex items-center gap-3">
 
-              {/* Sign In */}
               <Link
                 href="/signin"
                 className={`rounded-lg px-4 py-2 text-sm font-semibold transition ${
@@ -93,7 +115,6 @@ export default function Header() {
                 সাইন ইন
               </Link>
 
-              {/* Sign Up */}
               <Link
                 href="/signup"
                 className={`rounded-lg px-4 py-2 text-sm font-semibold transition ${
@@ -119,12 +140,12 @@ export default function Header() {
                 className="flex items-center gap-3 rounded-full border border-gray-200 px-4 py-2 transition hover:bg-gray-50"
               >
                 <div className="flex h-9 w-9 items-center justify-center rounded-full bg-green-100 font-bold text-green-700">
-                  R
+                  {user.name?.charAt(0).toUpperCase() || "U"}
                 </div>
 
                 <div className="hidden text-left sm:block">
                   <p className="text-sm font-semibold text-gray-800">
-                    Rezwan
+                    {user.name || "User"}
                   </p>
 
                   <p className="text-xs text-gray-500">
@@ -144,11 +165,11 @@ export default function Header() {
                   {/* User Information */}
                   <div className="border-b border-gray-100 pb-3">
                     <h3 className="text-sm font-bold text-gray-900">
-                      Rezwan Ahmed
+                      {user.name || "User"}
                     </h3>
 
-                    <p className="mt-1 text-xs text-gray-500">
-                      rezwanahmed@gmail.com
+                    <p className="mt-1 break-all text-xs text-gray-500">
+                      {user.email}
                     </p>
                   </div>
 
@@ -169,7 +190,7 @@ export default function Header() {
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.5 20.1a7.5 7.5 0 0 1 15 0A17.9 17.9 0 0 1 12 21.75c-2.7 0-5.25-.6-7.5-1.65Z"
+                        d="M15.75 6a3.75 3.75 0 1 1-7.5 0ZM4.5 20.1a7.5 7.5 0 0 1 15 0A17.9 17.9 0 0 1 12 21.75c-2.7 0-5.25-.6-7.5-1.65Z"
                       />
                     </svg>
 
@@ -177,10 +198,10 @@ export default function Header() {
                   </Link>
 
                   {/* Sign Out */}
-                  <Link
-                    href="/signin"
-                    onClick={() => setIsUserMenuOpen(false)}
-                    className="mt-1 flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-red-600 transition hover:bg-red-50"
+                  <button
+                    type="button"
+                    onClick={handleSignOut}
+                    className="mt-1 flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-red-600 transition hover:bg-red-50"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -198,7 +219,7 @@ export default function Header() {
                     </svg>
 
                     <span>সাইন আউট</span>
-                  </Link>
+                  </button>
 
                 </div>
               )}

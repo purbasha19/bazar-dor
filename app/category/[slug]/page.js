@@ -3,8 +3,9 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import Link from "next/link";
 
-import Header from "@/components/Header";
+import Navbar from "@/components/Navbar";
 import Ticker from "@/components/Ticker";
 import Footer from "@/components/Footer";
 import CategoryProducts from "@/components/CategoryProducts";
@@ -62,44 +63,72 @@ export default function CategoryPage() {
 
   return (
     <div className="min-h-screen bg-[#f8faf8]">
-      <Header />
+      <Navbar />
       <Ticker />
 
       <main className="px-5 py-10 lg:px-12">
         <div className="mx-auto max-w-[1440px]">
-
-          {/* Category Title Card */}
-          <div className="rounded-xl border border-gray-200 bg-white p-6 sm:p-8">
-            <div className="flex items-center gap-4">
-              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-green-50 text-4xl">
-                {categoryIcon}
-              </div>
-
-              <div>
-                <h1 className="text-2xl font-bold text-[#1c2b20]">
-                  {categoryName}
-                </h1>
-
-                <p className="mt-2 text-sm text-gray-500">
-                  {products.length.toLocaleString("bn-BD")}টি পণ্যের আজকের দাম ও পরিবর্তন
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Category Products */}
           {loading ? (
             <p className="py-12 text-center text-sm text-gray-500">
               পণ্য লোড হচ্ছে...
             </p>
           ) : error ? (
-            <p className="py-12 text-center text-sm text-red-500">
-              {error}
-            </p>
-          ) : (
-            <CategoryProducts products={products} />
-          )}
+            <div className="py-16 text-center">
+              <p className="text-sm text-red-500">{error}</p>
 
+              <button
+                onClick={() => window.location.reload()}
+                className="mt-5 rounded-lg bg-green-700 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-green-800"
+              >
+                আবার চেষ্টা করুন
+              </button>
+            </div>
+          ) : products.length === 0 ? (
+            /* Invalid Category / Empty State */
+            <div className="rounded-xl border border-gray-200 bg-white px-5 py-16 text-center">
+              <div className="mb-5 text-6xl">🔍</div>
+
+              <h1 className="text-2xl font-bold text-[#1c2b20]">
+                ক্যাটাগরি পাওয়া যায়নি!
+              </h1>
+
+              <p className="mx-auto mt-3 max-w-md text-sm text-gray-500">
+                দুঃখিত, এই ক্যাটাগরিতে কোনো পণ্য পাওয়া যায়নি।
+                অন্য ক্যাটাগরি দেখতে হোম পেজে ফিরে যান।
+              </p>
+
+              <Link
+                href="/"
+                className="mt-6 inline-flex rounded-lg bg-green-700 px-6 py-3 text-sm font-semibold text-white transition hover:bg-green-800"
+              >
+                হোম পেজে ফিরে যান
+              </Link>
+            </div>
+          ) : (
+            <>
+              {/* Category Title Card */}
+              <div className="rounded-xl border border-gray-200 bg-white p-6 sm:p-8">
+                <div className="flex items-center gap-4">
+                  <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-green-50 text-4xl">
+                    {categoryIcon}
+                  </div>
+
+                  <div>
+                    <h1 className="text-2xl font-bold text-[#1c2b20]">
+                      {categoryName}
+                    </h1>
+
+                    <p className="mt-2 text-sm text-gray-500">
+                      {products.length.toLocaleString("bn-BD")}টি পণ্যের আজকের দাম ও পরিবর্তন
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Category Products */}
+              <CategoryProducts products={products} />
+            </>
+          )}
         </div>
       </main>
 

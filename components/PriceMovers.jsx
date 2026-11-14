@@ -51,6 +51,11 @@ export default function PriceMovers() {
   const renderSection = (title, direction) => {
     const filteredProducts = products
       .filter((product) => product.change?.dir === direction)
+      .sort((a, b) => {
+        return direction === "up"
+          ? Number(b.change.pct) - Number(a.change.pct)
+          : Number(a.change.pct) - Number(b.change.pct);
+      })
       .slice(0, 6);
 
     const isUp = direction === "up";
@@ -79,14 +84,17 @@ export default function PriceMovers() {
                   <h3 className="text-sm font-semibold text-gray-800">
                     {product.nameBn}
                   </h3>
+
                   <p className="text-xs text-gray-500">
                     প্রতি {getUnit(product.unit)}
                   </p>
+
                   <p className="mt-2 text-xs text-gray-500">
                     আজকের দাম
                   </p>
+
                   <p className="text-sm font-bold text-[#1c2b20]">
-                    {product.today.toLocaleString("bn-BD")} টাকা
+                    {Number(product.today).toLocaleString("bn-BD")} টাকা
                   </p>
                 </div>
               </div>
@@ -99,7 +107,10 @@ export default function PriceMovers() {
                 }`}
               >
                 {isUp ? "▲" : "▼"}{" "}
-                {Math.abs(product.change.pct).toLocaleString("bn-BD")}%
+                {Math.abs(
+                  Number(product.change?.pct || 0)
+                ).toLocaleString("bn-BD")}
+                %
               </span>
             </div>
           ))}

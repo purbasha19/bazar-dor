@@ -1,10 +1,58 @@
+"use client";
 
 import Link from "next/link";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
 
 export default function SigninForm() {
+  const router = useRouter();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  const handleSignin = async (e) => {
+    e.preventDefault();
+
+    setError("");
+    setSuccess("");
+
+    if (!email || !password) {
+      setError("ইমেইল ও পাসওয়ার্ড লিখুন।");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const { error } = await authClient.signIn.email({
+        email,
+        password,
+      });
+
+      if (error) {
+        setError(error.message || "সাইন ইন করা যায়নি।");
+        return;
+      }
+
+      setSuccess("সাইন ইন সফল হয়েছে!");
+
+      router.push("/");
+      router.refresh();
+    } catch (err) {
+      console.error("Signin error:", err);
+      setError("কিছু সমস্যা হয়েছে। আবার চেষ্টা করুন।");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="w-full max-w-[416px] rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-      <form className="space-y-4">
+      <form onSubmit={handleSignin} className="space-y-4">
         {/* Email */}
         <div>
           <label
@@ -17,8 +65,11 @@ export default function SigninForm() {
           <input
             id="email"
             type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             placeholder="you@example.com"
             className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none transition focus:border-green-600 focus:ring-2 focus:ring-green-100"
+            required
           />
         </div>
 
@@ -34,17 +85,31 @@ export default function SigninForm() {
           <input
             id="password"
             type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             placeholder="কমপক্ষে ৮ অক্ষর"
             className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none transition focus:border-green-600 focus:ring-2 focus:ring-green-100"
+            required
           />
         </div>
+
+        {/* Error Message */}
+        {error && (
+          <p className="text-sm text-red-600">{error}</p>
+        )}
+
+        {/* Success Message */}
+        {success && (
+          <p className="text-sm text-green-700">{success}</p>
+        )}
 
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full rounded-lg bg-green-700 px-4 py-3 text-sm font-semibold text-white transition hover:bg-green-800"
+          disabled={loading}
+          className="w-full rounded-lg bg-green-700 px-4 py-3 text-sm font-semibold text-white transition hover:bg-green-800 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          সাইন ইন
+          {loading ? "সাইন ইন হচ্ছে..." : "সাইন ইন"}
         </button>
       </form>
 
@@ -59,18 +124,20 @@ export default function SigninForm() {
       <div className="grid grid-cols-2 gap-3">
         <button
           type="button"
-          className="flex items-center justify-center gap-2 rounded-lg border border-gray-300 px-2 py-2.5 text-xs font-medium text-gray-700 transition hover:bg-gray-50"
+          disabled
+          className="flex items-center justify-center gap-2 rounded-lg border border-gray-300 px-2 py-2.5 text-xs font-medium text-gray-400"
         >
-          <span className="text-base font-bold text-blue-600">G</span>
-          Google দিয়ে চালিয়ে যান
+          <span className="text-base font-bold">G</span>
+          Google
         </button>
 
         <button
           type="button"
-          className="flex items-center justify-center gap-2 rounded-lg border border-gray-300 px-2 py-2.5 text-xs font-medium text-gray-700 transition hover:bg-gray-50"
+          disabled
+          className="flex items-center justify-center gap-2 rounded-lg border border-gray-300 px-2 py-2.5 text-xs font-medium text-gray-400"
         >
-          <span className="text-base font-bold text-gray-900">●</span>
-          GitHub দিয়ে চালিয়ে যান
+          <span className="text-base font-bold">●</span>
+          GitHub
         </button>
       </div>
 
