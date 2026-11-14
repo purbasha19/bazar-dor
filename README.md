@@ -19,10 +19,8 @@ BazarDor is a simple and user-friendly grocery price tracking website built to h
 4. **User Authentication:** Create an account, sign in, and securely access your profile.
 5. **Profile Management:** View account information and update your name through the profile update page.
 
-## Live Website
+Live Link:
+https://bazar-dor-x9vp.vercel.app/
 
-[Visit BazarDor](YOUR_LIVE_DEPLOYMENT_URL)
-
-## GitHub Repository
-
-[View Source Code](YOUR_GITHUB_REPOSITORY_URL)
+GitHub Repository Link:
+https://github.com/purbasha19/bazar-dor
