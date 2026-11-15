@@ -99,27 +99,26 @@ export default function SigninForm() {
 
       <div className="my-5 flex items-center gap-3">
         <div className="h-px flex-1 bg-gray-200" />
+
         <span className="text-xs text-gray-400">অথবা</span>
+
         <div className="h-px flex-1 bg-gray-200" />
       </div>
 
+      {/* Social Login Buttons */}
       <div className="grid grid-cols-2 gap-3">
         <button
           type="button"
-          disabled
-          className="flex items-center justify-center gap-2 rounded-lg border border-gray-300 px-2 py-2.5 text-xs font-medium text-gray-400"
+          className="rounded-lg border border-gray-300 px-2 py-2.5 text-xs font-medium text-gray-700 transition hover:bg-gray-50"
         >
-          <span className="text-base font-bold">G</span>
-          Google
+          Google দিয়ে চালিয়ে যান
         </button>
 
         <button
           type="button"
-          disabled
-          className="flex items-center justify-center gap-2 rounded-lg border border-gray-300 px-2 py-2.5 text-xs font-medium text-gray-400"
+          className="rounded-lg border border-gray-300 px-2 py-2.5 text-xs font-medium text-gray-700 transition hover:bg-gray-50"
         >
-          <span className="text-base font-bold">●</span>
-          GitHub
+          GitHub দিয়ে চালিয়ে যান
         </button>
       </div>
 
